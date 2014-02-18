@@ -21,14 +21,15 @@ type MultipartComponenter interface {
 	SetWriter(multipart.Writer)
 }
 
-type mpFile struct {
+// MpFile is a MultpartComponenter implementation.
+type MpFile struct {
 	name     string
 	filename string
 	filetype string
 	writer   multipart.Writer
 }
 
-func (s *mpFile) Encode() error {
+func (s *MpFile) Encode() error {
 	file, err := os.Open(s.filename)
 	if err != nil {
 		return err
@@ -54,34 +55,35 @@ func (s *mpFile) Encode() error {
 	return nil
 }
 
-func (s *mpFile) SetWriter(w multipart.Writer) {
+func (s *MpFile) SetWriter(w multipart.Writer) {
 	s.writer = w
 }
 
 // PostFile creates a MultipartComponenter instance exposing a file
 // for a POST request.
-func PostFile(k, n, t string) *mpFile {
-	p := &mpFile{name: k, filename: n, filetype: t}
+func PostFile(k, n, t string) *MpFile {
+	p := &MpFile{name: k, filename: n, filetype: t}
 	return p
 }
 
-type mpValue struct {
+// MpValue is a MultpartComponenter implementation.
+type MpValue struct {
 	name   string
 	value  string
 	writer multipart.Writer
 }
 
-func (s *mpValue) Encode() {
+func (s *MpValue) Encode() {
 	_ = s.writer.WriteField(s.name, s.value)
 }
 
-func (s *mpValue) SetWriter(w multipart.Writer) {
+func (s *MpValue) SetWriter(w multipart.Writer) {
 	s.writer = w
 }
 
 // PostValue creates a MultipartComponenter instance exposing a parameter
 // for a POST request.
-func PostValue(k, v string) *mpValue {
-	p := &mpValue{name: k, value: v}
+func PostValue(k, v string) *MpValue {
+	p := &MpValue{name: k, value: v}
 	return p
 }
