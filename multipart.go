@@ -10,7 +10,6 @@ import (
 )
 
 type multipartComponenter interface {
-	Name() string
 	Encode()
 	SetWriter(multipart.Writer)
 }
@@ -22,10 +21,6 @@ type mpFile struct {
 	filename string
 	filetype string
 	writer   multipart.Writer
-}
-
-func (s *mpFile) Name() string {
-	return s.name
 }
 
 func (s *mpFile) Encode() error {
@@ -69,10 +64,6 @@ type mpValue struct {
 	name   string
 	value  string
 	writer multipart.Writer
-}
-
-func (s *mpValue) Name() string {
-	return s.name
 }
 
 func (s *mpValue) Encode() {
