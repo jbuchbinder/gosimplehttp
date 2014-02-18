@@ -5,6 +5,21 @@ import (
 	"net/http"
 )
 
+// SimpleGet is a wrapper for a ridiculously simple GET request.
+func SimpleGet(url string) (code int, resp []byte, err error) {
+	return SimpleGetWithAuth(url, "", "")
+}
+
+// SimpleGetWithAuth is a wrapper for a ridiculously simple GET request
+// with BASIC authentication.
+func SimpleGetWithAuth(url, username, password string) (code int, resp []byte, err error) {
+	c := NewClient()
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	return c.DoGet(url, nil)
+}
+
 // DoGet executes a GET with the specified criteria.
 func (s *SimpleHttpClient) DoGet(url string, headers map[string]string) (code int, resp []byte, err error) {
 	if !s.initialized {
