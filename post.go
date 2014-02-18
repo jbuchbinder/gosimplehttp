@@ -7,6 +7,24 @@ import (
 	"net/http"
 )
 
+// SimplePostXml is a wrapper for a ridiculously simple POST
+// request for XML content.
+func SimplePostXml(url, name, filename string) (code int, resp []byte, err error) {
+	return SimplePostXmlWithAuth(url, name, filename, "", "")
+}
+
+// SimplePostXmlWithAuth is a wrapper for a ridiculously simple
+// POST request for XML content with BASIC authentication.
+func SimplePostXmlWithAuth(url, name, filename, username, password string) (code int, resp []byte, err error) {
+	c := NewClient()
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	fComp := PostFile(name, filename, "application/xml")
+	comp := []MultipartComponenter{fComp}
+	return c.DoPost(url, comp, nil)
+}
+
 // DoPost executes a POST request with the specified criteria.
 func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter, headers map[string]string) (code int, resp []byte, err error) {
 	if !s.initialized {

@@ -14,7 +14,7 @@ import (
 type MultipartComponenter interface {
 	// Encode instantiates the POST section by rendering the output to
 	// the multipart.Writer object which was passed to SetWriter.
-	Encode()
+	Encode() error
 
 	// SetWriter sets the multipart.Writer which is used to render the
 	// section. It is called before the Encode() method.
@@ -73,8 +73,9 @@ type MpValue struct {
 	writer multipart.Writer
 }
 
-func (s *MpValue) Encode() {
-	_ = s.writer.WriteField(s.name, s.value)
+func (s *MpValue) Encode() error {
+	err := s.writer.WriteField(s.name, s.value)
+	return err
 }
 
 func (s *MpValue) SetWriter(w multipart.Writer) {
