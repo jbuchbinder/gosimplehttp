@@ -9,12 +9,17 @@ import (
 	"path/filepath"
 )
 
+// MultipartComponenter interface defines MIME sections of an HTTP POST
+// request.
 type MultipartComponenter interface {
+	// Encode instantiates the POST section by rendering the output to
+	// the multipart.Writer object which was passed to SetWriter.
 	Encode()
+
+	// SetWriter sets the multipart.Writer which is used to render the
+	// section. It is called before the Encode() method.
 	SetWriter(multipart.Writer)
 }
-
-//-------------------------------------------------------------------
 
 type mpFile struct {
 	name     string
