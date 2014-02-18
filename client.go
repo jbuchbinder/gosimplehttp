@@ -37,9 +37,15 @@ func (s *SimpleHttpClient) init() {
 	s.client = &http.Client{Transport: tr}
 }
 
+// GetClient retrieves a pointer to the underlying http.Client instance.
+func (s *SimpleHttpClient) GetClient() *http.Client {
+	return s.client
+}
+
 // SetAuthentication sets BASIC authentication username and password for
 // all further client requests.
 func (s *SimpleHttpClient) SetAuthentication(u, p string) {
 	s.username = u
 	s.password = p
 }
+
