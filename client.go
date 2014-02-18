@@ -12,19 +12,19 @@ const (
 	REQUEST_POST    = "POST"
 )
 
-type simpleHttpClient struct {
+type SimpleHttpClient struct {
 	client      *http.Client
 	username    string
 	password    string
 	initialized bool
 }
 
-func NewClient() *simpleHttpClient {
-	c := &simpleHttpClient{}
+func NewClient() *SimpleHttpClient {
+	c := &SimpleHttpClient{}
 	return c
 }
 
-func (s *simpleHttpClient) init() {
+func (s *SimpleHttpClient) init() {
 	tr := &http.Transport{
 		//TLSClientConfig:    &tls.Config{RootCAs: pool},
 		DisableCompression: true,
@@ -32,7 +32,7 @@ func (s *simpleHttpClient) init() {
 	s.client = &http.Client{Transport: tr}
 }
 
-func (s *simpleHttpClient) SetAuthentication(u, p string) {
+func (s *SimpleHttpClient) SetAuthentication(u, p string) {
 	s.username = u
 	s.password = p
 }
