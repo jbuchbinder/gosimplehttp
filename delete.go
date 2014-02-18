@@ -5,6 +5,22 @@ import (
 	"net/http"
 )
 
+// SimpleDelete is a wrapper for a ridiculously simple DELETE
+// request.
+func SimpleDelete(url string) (code int, resp []byte, err error) {
+	return SimpleDeleteWithAuth(url, "", "")
+}
+
+// SimpleDeleteWithAuth is a wrapper for a ridiculously simple
+// DELETE request with BASIC authentication.
+func SimpleDeleteWithAuth(url, username, password string) (code int, resp []byte, err error) {
+	c := NewClient()
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	return c.DoDelete(url, nil)
+}
+
 // DoDelete executes a DELETE with the specified criteria.
 func (s *SimpleHttpClient) DoDelete(url string, headers map[string]string) (code int, resp []byte, err error) {
 	if !s.initialized {
