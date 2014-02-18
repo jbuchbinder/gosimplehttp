@@ -39,6 +39,11 @@ func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter,
 	if s.username != "" && s.password != "" {
 		req.SetBasicAuth(s.username, s.password)
 	}
+	if s.cookies != nil && len(s.cookies) > 0 {
+		for _, v := range s.cookies {
+			req.AddCookie(v)
+		}
+	}
 	res, err := s.client.Do(req)
 	if err != nil {
 		return
