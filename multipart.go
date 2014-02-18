@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-type multipartComponenter interface {
+type MultipartComponenter interface {
 	Encode()
 	SetWriter(multipart.Writer)
 }
@@ -53,12 +53,12 @@ func (s *mpFile) SetWriter(w multipart.Writer) {
 	s.writer = w
 }
 
+// PostFile creates a MultipartComponenter instance exposing a file
+// for a POST request.
 func PostFile(k, n, t string) *mpFile {
 	p := &mpFile{name: k, filename: n, filetype: t}
 	return p
 }
-
-//-------------------------------------------------------------------
 
 type mpValue struct {
 	name   string
@@ -74,6 +74,8 @@ func (s *mpValue) SetWriter(w multipart.Writer) {
 	s.writer = w
 }
 
+// PostValue creates a MultipartComponenter instance exposing a parameter
+// for a POST request.
 func PostValue(k, v string) *mpValue {
 	p := &mpValue{name: k, value: v}
 	return p

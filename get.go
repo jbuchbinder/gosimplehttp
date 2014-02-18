@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// DoGet executes a GET with the specified criteria.
 func (s *SimpleHttpClient) DoGet(url string, headers map[string]string) (code int, resp []byte, err error) {
 	if !s.initialized {
 		s.init()

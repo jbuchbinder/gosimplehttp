@@ -7,7 +7,8 @@ import (
 	"net/http"
 )
 
-func (s *SimpleHttpClient) DoPost(url string, components []multipartComponenter, headers map[string]string) (code int, resp []byte, err error) {
+// DoPost executes a POST request with the specified criteria.
+func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter, headers map[string]string) (code int, resp []byte, err error) {
 	if !s.initialized {
 		s.init()
 	}
