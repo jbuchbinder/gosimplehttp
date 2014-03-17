@@ -1,6 +1,7 @@
 package gosimplehttp
 
 import (
+	"crypto/tls"
 	"net/http"
 )
 
@@ -16,11 +17,12 @@ const (
 // ideally be instantiated by NewClient(), and should be called with the
 // Set* methods, then have calls executed with Do* methods.
 type SimpleHttpClient struct {
-	client      *http.Client
-	username    string
-	password    string
-	initialized bool
-	cookies     []*http.Cookie
+	client          *http.Client
+	username        string
+	password        string
+	initialized     bool
+	cookies         []*http.Cookie
+	tlsClientConfig *tls.Config
 }
 
 // NewClient instantiates a pointer to a SimpleHttpClient object, which is
@@ -31,10 +33,22 @@ func NewClient() *SimpleHttpClient {
 	return c
 }
 
+// NewClientWithTlsParams instantiates a pointer to a SimpleHttpClient
+// object, which is the base of all client operations, with specified
+// TLS configuration.
+func NewClientWithTlsParams(tlsConfig *tls.Config) *SimpleHttpClient {
+	c := &SimpleHttpClient{}
+	c.cookies = []*http.Cookie{}
+	c.tlsClientConfig = tlsConfig
+	return c
+}
+
 func (s *SimpleHttpClient) init() {
 	tr := &http.Transport{
-		//TLSClientConfig:    &tls.Config{RootCAs: pool},
 		DisableCompression: true,
+	}
+	if s.tlsClientConfig != nil {
+		tr.TLSClientConfig = s.tlsClientConfig
 	}
 	s.client = &http.Client{Transport: tr}
 }
