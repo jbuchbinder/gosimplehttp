@@ -1,6 +1,7 @@
 package gosimplehttp
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -63,6 +64,46 @@ func (s *MpFile) SetWriter(w multipart.Writer) {
 // for a POST request.
 func PostFile(k, n, t string) *MpFile {
 	p := &MpFile{name: k, filename: n, filetype: t}
+	return p
+}
+
+// MpData is a MultpartComponenter implementation.
+type MpData struct {
+	name     string
+	data     []byte
+	filetype string
+	writer   multipart.Writer
+}
+
+func (s *MpData) Encode() error {
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition",
+		fmt.Sprintf(`form-data; name="%s"`,
+			EscapeQuotes(s.name)))
+	h.Set("Content-Type", s.filetype)
+	part, err := s.writer.CreatePart(h)
+	if err != nil {
+		return err
+	}
+
+	buf := bytes.NewBuffer(s.data)
+
+	_, err = io.Copy(part, buf)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *MpData) SetWriter(w multipart.Writer) {
+	s.writer = w
+}
+
+// PostData creates a MultipartComponenter instance exposing a file
+// for a POST request.
+func PostData(k string, d []byte, t string) *MpData {
+	p := &MpData{name: k, data: d, filetype: t}
 	return p
 }
 
