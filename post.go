@@ -7,6 +7,24 @@ import (
 	"net/http"
 )
 
+// SimplePostJson is a wrapper for a ridiculously simple POST
+// request for JSON content.
+func SimplePostJson(url, name, filename string) (code int, resp []byte, err error) {
+	return SimplePostJsonWithAuth(url, name, filename, "", "")
+}
+
+// SimplePostJsonWithAuth is a wrapper for a ridiculously simple
+// POST request for JSON content with BASIC authentication.
+func SimplePostJsonWithAuth(url, name, filename, username, password string) (code int, resp []byte, err error) {
+	c := NewClient()
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	fComp := PostFile(name, filename, "application/json")
+	comp := []MultipartComponenter{fComp}
+	return c.DoPost(url, comp, nil)
+}
+
 // SimplePostXml is a wrapper for a ridiculously simple POST
 // request for XML content.
 func SimplePostXml(url, name, filename string) (code int, resp []byte, err error) {
