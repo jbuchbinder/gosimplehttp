@@ -13,6 +13,24 @@ func SimplePostJson(url, name, filename string) (code int, resp []byte, head htt
 	return SimplePostJsonWithAuth(url, name, filename, "", "")
 }
 
+// SimplePostJsonNoFile is a wrapper for a ridiculously simple POST
+// request for JSON content, pulled from local content
+func SimplePostNoFileJson(url, name string, content []byte) (code int, resp []byte, head http.Header, err error) {
+	return SimplePostJsonNoFileWithAuth(url, name, content, "", "")
+}
+
+// SimplePostJsonNoFileWithAuth is a wrapper for a ridiculously simple
+// POST request for JSON content with BASIC authentication.
+func SimplePostJsonNoFileWithAuth(url, name string, content []byte, username, password string) (code int, resp []byte, head http.Header, err error) {
+	c := NewClient()
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	fComp := PostValue(name, string(content))
+	comp := []MultipartComponenter{fComp}
+	return c.DoPost(url, comp, nil)
+}
+
 // SimplePostJsonWithAuth is a wrapper for a ridiculously simple
 // POST request for JSON content with BASIC authentication.
 func SimplePostJsonWithAuth(url, name, filename, username, password string) (code int, resp []byte, head http.Header, err error) {
