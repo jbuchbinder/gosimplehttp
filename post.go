@@ -9,13 +9,13 @@ import (
 
 // SimplePostJson is a wrapper for a ridiculously simple POST
 // request for JSON content.
-func SimplePostJson(url, name, filename string) (code int, resp []byte, err error) {
+func SimplePostJson(url, name, filename string) (code int, resp []byte, head http.Header, err error) {
 	return SimplePostJsonWithAuth(url, name, filename, "", "")
 }
 
 // SimplePostJsonWithAuth is a wrapper for a ridiculously simple
 // POST request for JSON content with BASIC authentication.
-func SimplePostJsonWithAuth(url, name, filename, username, password string) (code int, resp []byte, err error) {
+func SimplePostJsonWithAuth(url, name, filename, username, password string) (code int, resp []byte, head http.Header, err error) {
 	c := NewClient()
 	if username != "" && password != "" {
 		c.SetAuthentication(username, password)
@@ -27,13 +27,13 @@ func SimplePostJsonWithAuth(url, name, filename, username, password string) (cod
 
 // SimplePostXml is a wrapper for a ridiculously simple POST
 // request for XML content.
-func SimplePostXml(url, name, filename string) (code int, resp []byte, err error) {
+func SimplePostXml(url, name, filename string) (code int, resp []byte, head http.Header, err error) {
 	return SimplePostXmlWithAuth(url, name, filename, "", "")
 }
 
 // SimplePostXmlWithAuth is a wrapper for a ridiculously simple
 // POST request for XML content with BASIC authentication.
-func SimplePostXmlWithAuth(url, name, filename, username, password string) (code int, resp []byte, err error) {
+func SimplePostXmlWithAuth(url, name, filename, username, password string) (code int, resp []byte, head http.Header, err error) {
 	c := NewClient()
 	if username != "" && password != "" {
 		c.SetAuthentication(username, password)
@@ -44,7 +44,7 @@ func SimplePostXmlWithAuth(url, name, filename, username, password string) (code
 }
 
 // DoPost executes a POST request with the specified criteria.
-func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter, headers map[string]string) (code int, resp []byte, err error) {
+func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter, headers map[string]string) (code int, resp []byte, head http.Header, err error) {
 	if !s.initialized {
 		s.init()
 	}
@@ -85,6 +85,7 @@ func (s *SimpleHttpClient) DoPost(url string, components []MultipartComponenter,
 		return
 	}
 	defer res.Body.Close()
+	head = res.Header
 	resp, err = ioutil.ReadAll(res.Body)
 	if err != nil {
 		return

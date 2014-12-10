@@ -6,13 +6,13 @@ import (
 )
 
 // SimpleGet is a wrapper for a ridiculously simple GET request.
-func SimpleGet(url string) (code int, resp []byte, err error) {
+func SimpleGet(url string) (code int, resp []byte, head http.Header, err error) {
 	return SimpleGetWithAuth(url, "", "")
 }
 
 // SimpleGetWithAuth is a wrapper for a ridiculously simple GET request
 // with BASIC authentication.
-func SimpleGetWithAuth(url, username, password string) (code int, resp []byte, err error) {
+func SimpleGetWithAuth(url, username, password string) (code int, resp []byte, head http.Header, err error) {
 	c := NewClient()
 	if username != "" && password != "" {
 		c.SetAuthentication(username, password)
@@ -21,7 +21,7 @@ func SimpleGetWithAuth(url, username, password string) (code int, resp []byte, e
 }
 
 // DoGet executes a GET with the specified criteria.
-func (s *SimpleHttpClient) DoGet(url string, headers map[string]string) (code int, resp []byte, err error) {
+func (s *SimpleHttpClient) DoGet(url string, headers map[string]string) (code int, resp []byte, head http.Header, err error) {
 	if !s.initialized {
 		s.init()
 	}
@@ -47,6 +47,7 @@ func (s *SimpleHttpClient) DoGet(url string, headers map[string]string) (code in
 		return
 	}
 	defer res.Body.Close()
+	head = res.Header
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return

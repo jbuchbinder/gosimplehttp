@@ -7,13 +7,13 @@ import (
 
 // SimpleDelete is a wrapper for a ridiculously simple DELETE
 // request.
-func SimpleDelete(url string) (code int, resp []byte, err error) {
+func SimpleDelete(url string) (code int, resp []byte, head http.Header, err error) {
 	return SimpleDeleteWithAuth(url, "", "")
 }
 
 // SimpleDeleteWithAuth is a wrapper for a ridiculously simple
 // DELETE request with BASIC authentication.
-func SimpleDeleteWithAuth(url, username, password string) (code int, resp []byte, err error) {
+func SimpleDeleteWithAuth(url, username, password string) (code int, resp []byte, head http.Header, err error) {
 	c := NewClient()
 	if username != "" && password != "" {
 		c.SetAuthentication(username, password)
@@ -22,7 +22,7 @@ func SimpleDeleteWithAuth(url, username, password string) (code int, resp []byte
 }
 
 // DoDelete executes a DELETE with the specified criteria.
-func (s *SimpleHttpClient) DoDelete(url string, headers map[string]string) (code int, resp []byte, err error) {
+func (s *SimpleHttpClient) DoDelete(url string, headers map[string]string) (code int, resp []byte, head http.Header, err error) {
 	if !s.initialized {
 		s.init()
 	}
@@ -48,6 +48,7 @@ func (s *SimpleHttpClient) DoDelete(url string, headers map[string]string) (code
 		return
 	}
 	defer res.Body.Close()
+	head = res.Header
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return
