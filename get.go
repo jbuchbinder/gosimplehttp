@@ -10,10 +10,27 @@ func SimpleGet(url string) (code int, resp []byte, head http.Header, err error) 
 	return SimpleGetWithAuth(url, "", "")
 }
 
+// SimpleGetTimeout is a wrapper for a ridiculously simple GET request.
+func SimpleGetTimeout(url string, timeout int) (code int, resp []byte, head http.Header, err error) {
+	return SimpleGetWithAuthTimeout(url, "", "", timeout)
+}
+
 // SimpleGetWithAuth is a wrapper for a ridiculously simple GET request
 // with BASIC authentication.
 func SimpleGetWithAuth(url, username, password string) (code int, resp []byte, head http.Header, err error) {
 	c := NewClient()
+	c.Timeout = 30
+	if username != "" && password != "" {
+		c.SetAuthentication(username, password)
+	}
+	return c.DoGet(url, nil)
+}
+
+// SimpleGetWithAuthTimeout is a wrapper for a ridiculously simple GET request
+// with BASIC authentication and a specified timeout.
+func SimpleGetWithAuthTimeout(url, username, password string, timeout int) (code int, resp []byte, head http.Header, err error) {
+	c := NewClient()
+	c.Timeout = timeout
 	if username != "" && password != "" {
 		c.SetAuthentication(username, password)
 	}

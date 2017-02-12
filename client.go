@@ -3,6 +3,7 @@ package gosimplehttp
 import (
 	"crypto/tls"
 	"net/http"
+	"time"
 )
 
 const (
@@ -17,6 +18,7 @@ const (
 // ideally be instantiated by NewClient(), and should be called with the
 // Set* methods, then have calls executed with Do* methods.
 type SimpleHttpClient struct {
+	Timeout         int
 	client          *http.Client
 	username        string
 	password        string
@@ -50,7 +52,7 @@ func (s *SimpleHttpClient) init() {
 	if s.tlsClientConfig != nil {
 		tr.TLSClientConfig = s.tlsClientConfig
 	}
-	s.client = &http.Client{Transport: tr}
+	s.client = &http.Client{Transport: tr, Timeout: time.Duration(s.Timeout) * time.Second}
 }
 
 // AddCookie adds a pointer to an http.Cookie object to the list
